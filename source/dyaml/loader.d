@@ -150,7 +150,7 @@ struct Loader
             resolver_ = Resolver.withDefaultResolvers;
             try
             {
-                auto reader_ = new Reader(yamlData);
+                auto reader_ = Reader(yamlData);
                 scanner_ = Scanner(reader_);
                 parser_ = new Parser(scanner_);
             }

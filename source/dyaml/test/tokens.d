@@ -21,7 +21,7 @@ module dyaml.test.tokens;
     static auto scanTestCommon(string filename) @safe
     {
         ubyte[] yamlData = cast(ubyte[])readText(filename).dup;
-        return Scanner(new Reader(yamlData));
+        return Scanner(Reader(yamlData));
     }
 
     /**

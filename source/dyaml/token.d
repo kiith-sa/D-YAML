@@ -69,7 +69,7 @@ struct Token
     ///
     /// Values are char[] instead of string, as Parser may still change them in a few
     /// cases. Parser casts values to strings when producing Events.
-    char[] value;
+    string value;
     // 4B
     /// Start position of the token in file/stream.
     Mark startMark;
@@ -82,9 +82,6 @@ struct Token
     // 1B
     /// Style of scalar token, if this is a scalar token.
     ScalarStyle style;
-    // 1B
-    /// Encoding, if this is a stream start token.
-    Encoding encoding;
     // 1B
     /// Type of directive for directiveToken.
     DirectiveType directive;
@@ -103,10 +100,10 @@ struct Token
 ///          value     = Value of the token.
 ///          directive = Directive type (YAML or TAG in YAML 1.1).
 ///          nameEnd = Position of the end of the name
-Token directiveToken(const Mark start, const Mark end, char[] value,
+Token directiveToken(const Mark start, const Mark end, string value,
                      DirectiveType directive, const uint nameEnd) @safe pure nothrow @nogc
 {
-    return Token(value, start, end, TokenID.directive, ScalarStyle.init, Encoding.init,
+    return Token(value, start, end, TokenID.directive, ScalarStyle.init,
                  directive, nameEnd);
 }
 
@@ -125,9 +122,9 @@ Token simpleToken(TokenID id)(const Mark start, const Mark end)
 /// Params:  start    = Start position of the token.
 ///          end      = End position of the token.
 ///          encoding = Encoding of the stream.
-Token streamStartToken(const Mark start, const Mark end, const Encoding encoding) @safe pure nothrow @nogc
+Token streamStartToken(const Mark start, const Mark end) @safe pure nothrow @nogc
 {
-    return Token(null, start, end, TokenID.streamStart, ScalarStyle.invalid, encoding);
+    return Token(null, start, end, TokenID.streamStart, ScalarStyle.invalid);
 }
 
 /// Aliases for construction of simple token types.
@@ -148,10 +145,10 @@ alias flowEntryToken = simpleToken!(TokenID.flowEntry);
 ///          value        = Value of the token.
 ///          valueDivider = A hack for TagToken to store 2 values in value; the first
 ///                         value goes up to valueDivider, the second after it.
-Token simpleValueToken(TokenID id)(const Mark start, const Mark end, char[] value,
+Token simpleValueToken(TokenID id)(const Mark start, const Mark end, string value,
                                    const uint valueDivider = uint.max)
 {
-    return Token(value, start, end, id, ScalarStyle.invalid, Encoding.init,
+    return Token(value, start, end, id, ScalarStyle.invalid,
                  DirectiveType.init, valueDivider);
 }
 
@@ -166,7 +163,7 @@ alias anchorToken = simpleValueToken!(TokenID.anchor);
 ///          end   = End position of the token.
 ///          value = Value of the token.
 ///          style = Style of the token.
-Token scalarToken(const Mark start, const Mark end, char[] value, const ScalarStyle style) @safe pure nothrow @nogc
+Token scalarToken(const Mark start, const Mark end, string value, const ScalarStyle style) @safe pure nothrow @nogc
 {
     return Token(value, start, end, TokenID.scalar, style);
 }
